@@ -139,6 +139,11 @@ public struct PillButton: View {
             Text(title)
                 .font(font)
                 .foregroundStyle(fg)
+                // A pill states an action: it keeps its intrinsic width and lets
+                // the surrounding layout give way. Without this a tight row
+                // hyphenates the label ("Clon e…").
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .frame(height: height)
                 .padding(.horizontal, hpad)
                 .background(RoundedRectangle(cornerRadius: radius, style: .continuous).fill(fill))
@@ -146,6 +151,7 @@ public struct PillButton: View {
         }
         .buttonStyle(.pointer)
         .onHover { hovering = $0 }
+        .fixedSize(horizontal: true, vertical: false)
     }
 }
 
@@ -171,7 +177,11 @@ public struct LinkButton: View {
 
     public var body: some View {
         Button(action: action) {
-            Text(title).font(font).foregroundStyle(hovering ? (hoverColor ?? color) : color)
+            Text(title)
+                .font(font)
+                .foregroundStyle(hovering ? (hoverColor ?? color) : color)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
         }
         .buttonStyle(.pointer)
         .onHover { hovering = $0 }
