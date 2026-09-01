@@ -56,9 +56,28 @@ public struct Palette: Sendable {
     public let redHover: Color
     public let green: Color
     public let amber: Color
+    /// Distinct from `amber` in BOTH palettes — light-mode amber is already an
+    /// orange, so a state needing its own orange must use this.
+    public let orange: Color
+
+    /// Status colours darkened for small text. The vivid `green/amber/orange/red`
+    /// are icon/fill colours: at caption sizes on a light card they fall to
+    /// ~2:1 contrast. Use these whenever a status colour carries *text*.
+    public let greenText: Color
+    public let amberText: Color
+    public let orangeText: Color
+    public let redText: Color
 
     public let sheet: Color
     public let scrim: Color
+
+    /// True for the dark palette. Lets views tune effects that don't translate
+    /// (glows, shadows) without reaching for the environment's colorScheme,
+    /// which the in-app theme toggle can disagree with.
+    public let isDark: Bool
+
+    /// Dark palettes carry the vivid glow; light ones smear unless dialed back.
+    public var glowStrength: Double { isDark ? 1.0 : 0.4 }
 
     public static let dark = Palette(
         win: Color(hex: 0x1C1C1E),
@@ -81,8 +100,14 @@ public struct Palette: Sendable {
         redHover: Color(hex: 0xFF6259),
         green: Color(hex: 0x30D158),
         amber: Color(hex: 0xFFD60A),
+        orange: Color(hex: 0xFF9F0A),
+        greenText: Color(hex: 0x30D158),
+        amberText: Color(hex: 0xFFD60A),
+        orangeText: Color(hex: 0xFF9F0A),
+        redText: Color(hex: 0xFF453A),
         sheet: Color(hex: 0x3A3A3C),
-        scrim: Color(black: 0, opacity: 0.42)
+        scrim: Color(black: 0, opacity: 0.42),
+        isDark: true
     )
 
     public static let light = Palette(
@@ -106,23 +131,34 @@ public struct Palette: Sendable {
         redHover: Color(hex: 0xE32A20),
         green: Color(hex: 0x34C759),
         amber: Color(hex: 0xFF9F0A),
+        orange: Color(hex: 0xC93400),
+        greenText: Color(hex: 0x1F8A3D),
+        amberText: Color(hex: 0xB36200),
+        orangeText: Color(hex: 0xC93400),
+        redText: Color(hex: 0xD70015),
         sheet: Color(hex: 0xF2F2F5),
-        scrim: Color(black: 0, opacity: 0.24)
+        scrim: Color(black: 0, opacity: 0.24),
+        isDark: false
     )
 
     public init(win: Color, sidebar: Color, content: Color, card: Color, cardHover: Color,
                 well: Color, sep: Color, sep2: Color, label: Color, label2: Color,
                 label3: Color, btn: Color, btnHover: Color, accent: Color,
                 accentHover: Color, accentTint: Color, red: Color, redHover: Color,
-                green: Color, amber: Color, sheet: Color, scrim: Color) {
+                green: Color, amber: Color, orange: Color, greenText: Color,
+                amberText: Color, orangeText: Color, redText: Color,
+                sheet: Color, scrim: Color, isDark: Bool) {
         self.win = win; self.sidebar = sidebar; self.content = content
         self.card = card; self.cardHover = cardHover; self.well = well
         self.sep = sep; self.sep2 = sep2
         self.label = label; self.label2 = label2; self.label3 = label3
         self.btn = btn; self.btnHover = btnHover
         self.accent = accent; self.accentHover = accentHover; self.accentTint = accentTint
-        self.red = red; self.redHover = redHover; self.green = green; self.amber = amber
-        self.sheet = sheet; self.scrim = scrim
+        self.red = red; self.redHover = redHover; self.green = green
+        self.amber = amber; self.orange = orange
+        self.greenText = greenText; self.amberText = amberText
+        self.orangeText = orangeText; self.redText = redText
+        self.sheet = sheet; self.scrim = scrim; self.isDark = isDark
     }
 }
 

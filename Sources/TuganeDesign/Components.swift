@@ -96,7 +96,9 @@ public struct PillButton: View {
     @Environment(\.palette) private var p
     @State private var hovering = false
 
-    public init(_ title: String,
+    /// Auger's call dialect (`PillButton(title:…)`) is the canonical one; the
+    /// positional overload below is sugar, not a fork.
+    public init(title: String,
                 role: PillRole = .neutral,
                 height: CGFloat = 36,
                 hpad: CGFloat = 18,
@@ -110,6 +112,17 @@ public struct PillButton: View {
         self.radius = radius
         self.font = font
         self.action = action
+    }
+
+    public init(_ title: String,
+                role: PillRole = .neutral,
+                height: CGFloat = 36,
+                hpad: CGFloat = 18,
+                radius: CGFloat = 9,
+                font: Font = .system(size: 13.5, weight: .medium),
+                action: @escaping () -> Void) {
+        self.init(title: title, role: role, height: height, hpad: hpad,
+                  radius: radius, font: font, action: action)
     }
 
     private var fill: Color {
@@ -227,7 +240,8 @@ public extension View {
 
 // MARK: - Icon badge (Auger's mascot spot)
 
-/// A clean SF Symbol in a soft tinted circle, for hero/empty/error/sheet spots.
+/// A clean SF Symbol scaled to its frame, used for hero/empty/error/sheet
+/// spots. Renders no image asset — scales to any frame, adapts to light/dark.
 public struct Mascot: View {
     let symbol: String
     var tint: Color?
@@ -243,14 +257,51 @@ public struct Mascot: View {
         GeometryReader { geo in
             let s = min(geo.size.width, geo.size.height)
             let color = tint ?? p.accent
-            ZStack {
-                Circle().fill(color.opacity(0.16))
-                Image(systemName: symbol)
-                    .font(.system(size: s * 0.42, weight: .medium))
-                    .foregroundStyle(color)
-            }
-            .frame(width: s, height: s)
-            .position(x: geo.size.width / 2, y: geo.size.height / 2)
+            Image(systemName: symbol)
+                .font(.system(size: s * 0.58, weight: .medium))
+                .foregroundStyle(color)
+                .symbolRenderingMode(.hierarchical)
+                .frame(width: s, height: s)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
+}
+
+// MARK: - Labels
+
+/// Small semibold caption introducing a field or group.
+public struct FieldLabel: View {
+    let text: String
+    @Environment(\.palette) private var p
+
+    public init(_ text: String) { self.text = text }
+
+    public var body: some View {
+        Text(text)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(p.label2)
+    }
+}
+
+/// Uppercase section heading used in sidebars and long pages.
+public struct SectionLabel: View {
+    let text: String
+    @Environment(\.palette) private var p
+
+    public init(_ text: String) { self.text = text }
+
+    public var body: some View {
+        Text(text.uppercased())
+            .font(.system(size: 11.5, weight: .semibold))
+            .tracking(0.6)
+            .foregroundStyle(p.label3)
+    }
+}
+
+// MARK: - Copy helpers
+
+/// "1 path" / "3 paths" — a count with a correctly pluralized noun. The design
+/// language never ships programmer plurals like "1 finding(s)".
+public func plural(_ n: Int, _ singular: String, _ pluralForm: String? = nil) -> String {
+    "\(n) \(n == 1 ? singular : (pluralForm ?? singular + "s"))"
 }
