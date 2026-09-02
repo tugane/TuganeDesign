@@ -315,3 +315,38 @@ public struct SectionLabel: View {
 public func plural(_ n: Int, _ singular: String, _ pluralForm: String? = nil) -> String {
     "\(n) \(n == 1 ? singular : (pluralForm ?? singular + "s"))"
 }
+
+// MARK: - Page backdrop
+
+/// The large blurred watermark that sits behind a page: a decorative glyph,
+/// heavily blurred, drifting on a slow loop. It is what gives the language its
+/// sense of depth, and it is deliberately a *symbol* rather than a gradient —
+/// the silhouette keeps the shape organic instead of a perfect circle.
+///
+/// Use a different glyph per page, distinct from the sidebar's nav icons.
+public struct PageBackdrop: View {
+    let symbol: String
+    var tint: Color?
+
+    @Environment(\.palette) private var p
+    @State private var drift = false
+
+    public init(symbol: String, tint: Color? = nil) {
+        self.symbol = symbol
+        self.tint = tint
+    }
+
+    public var body: some View {
+        Image(systemName: symbol)
+            .font(.system(size: 460, weight: .regular))
+            .foregroundStyle(tint ?? p.accent)
+            .blur(radius: 48)
+            .rotationEffect(.degrees(drift ? -2 : -14))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .offset(x: drift ? 150 : 80, y: drift ? 10 : -80)
+            .allowsHitTesting(false)
+            .clipped()
+            .animation(.easeInOut(duration: 11).repeatForever(autoreverses: true), value: drift)
+            .onAppear { drift = true }
+    }
+}
