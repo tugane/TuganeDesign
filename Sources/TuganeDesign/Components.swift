@@ -12,26 +12,48 @@ import AppKit
 
 // MARK: - Hover cursor
 
-private struct HoverCursor: ViewModifier {
-    let cursor: NSCursor
+/// Pointing-hand cursor over a control.
+///
+/// macOS 15 gained `pointerStyle`, which is declarative and system-managed:
+/// the cursor follows the view, survives scrolling, re-layout and a view being
+/// replaced mid-hover. Prefer it. The fallback below drives `NSCursor`'s global
+/// push/pop stack by hand, which is only correct if every push is matched — and
+/// the three ways to lose a pop are all real: the view disappears while hovered
+/// (sheet dismissed, page switched), the control becomes disabled while
+/// hovered, or a second push lands before the first pops. Each is handled.
+private struct HoverPointer: ViewModifier {
+    let active: Bool
     @State private var pushed = false
+
+    @ViewBuilder
     func body(content: Content) -> some View {
-        content
-            .onHover { inside in
-                if inside {
-                    if !pushed { cursor.push(); pushed = true }
-                } else if pushed {
-                    NSCursor.pop(); pushed = false
-                }
-            }
-            .onDisappear { if pushed { NSCursor.pop(); pushed = false } }
+        if #available(macOS 15, *) {
+            content.pointerStyle(active ? .link : nil)
+        } else {
+            content
+                .onHover { inside in set(inside && active) }
+                .onChange(of: active) { _, isActive in if !isActive { set(false) } }
+                .onDisappear { set(false) }
+        }
+    }
+
+    private func set(_ want: Bool) {
+        guard want != pushed else { return }        // never stack two pushes
+        if want { NSCursor.pointingHand.push() } else { NSCursor.pop() }
+        pushed = want
     }
 }
 
 public extension View {
-    /// Show the given cursor (pointing hand by default) while hovering.
+    /// Show the pointing hand while hovering, when `active`.
+    func hoverPointer(_ active: Bool = true) -> some View {
+        modifier(HoverPointer(active: active))
+    }
+
+    /// Kept for callers that name a cursor; anything but the pointing hand
+    /// means "leave the cursor alone".
     func hoverCursor(_ cursor: NSCursor = .pointingHand) -> some View {
-        modifier(HoverCursor(cursor: cursor))
+        hoverPointer(cursor == NSCursor.pointingHand)
     }
 }
 
@@ -52,7 +74,7 @@ private struct PointerButtonBody: View {
     var body: some View {
         configuration.label
             .opacity(configuration.isPressed ? 0.72 : 1)
-            .hoverCursor(isEnabled ? .pointingHand : .arrow)
+            .hoverPointer(isEnabled)
     }
 }
 
