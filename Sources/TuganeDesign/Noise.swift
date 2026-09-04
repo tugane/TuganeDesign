@@ -6,7 +6,7 @@
 //  generated once and cached; it renders with a low-opacity soft-light blend so
 //  it adds tooth without hurting legibility, in both light and dark.
 //
-//  Ported from Auger's V2/Noise.swift — the grain is part of the language, not
+//  Ported from Auger's V2/Noise.swift. The grain is part of the language, not
 //  an Auger-only flourish.
 //
 

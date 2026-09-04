@@ -1,6 +1,6 @@
 //
 //  Theme.swift
-//  TuganeDesign — the shared design language for tugane's apps.
+//  TuganeDesign: the shared design language for tugane's apps.
 //
 //  Extracted from Auger's v2 design system (auger-app/Auger/V2/Theme.swift)
 //  so every app renders from the same tokens. The design toggles dark/light
@@ -56,7 +56,7 @@ public struct Palette: Sendable {
     public let redHover: Color
     public let green: Color
     public let amber: Color
-    /// Distinct from `amber` in BOTH palettes — light-mode amber is already an
+    /// Distinct from `amber` in BOTH palettes. Light-mode amber is already an
     /// orange, so a state needing its own orange must use this.
     public let orange: Color
 

@@ -1,10 +1,10 @@
 //
 //  Components.swift
-//  TuganeDesign — shared building blocks, extracted from Auger's v2 system.
+//  TuganeDesign: shared building blocks, extracted from Auger's v2 system.
 //
 //  Pill buttons, text links, hover fills, pointer cursors, the card container,
 //  disclosure chevron, checkbox, and the icon-badge mascot. Every clickable
-//  control shows the pointing-hand cursor — that's part of the language.
+//  control shows the pointing-hand cursor: that's part of the language.
 //
 
 import SwiftUI
@@ -17,7 +17,7 @@ import AppKit
 /// macOS 15 gained `pointerStyle`, which is declarative and system-managed:
 /// the cursor follows the view, survives scrolling, re-layout and a view being
 /// replaced mid-hover. Prefer it. The fallback below drives `NSCursor`'s global
-/// push/pop stack by hand, which is only correct if every push is matched — and
+/// push/pop stack by hand, which is only correct if every push is matched: and
 /// the three ways to lose a pop are all real: the view disappears while hovered
 /// (sheet dismissed, page switched), the control becomes disabled while
 /// hovered, or a second push lands before the first pops. Each is handled.
@@ -273,7 +273,7 @@ public extension View {
 // MARK: - Icon badge (Auger's mascot spot)
 
 /// A clean SF Symbol scaled to its frame, used for hero/empty/error/sheet
-/// spots. Renders no image asset — scales to any frame, adapts to light/dark.
+/// spots. Renders no image asset: scales to any frame, adapts to light/dark.
 public struct Mascot: View {
     let symbol: String
     var tint: Color?
@@ -332,7 +332,7 @@ public struct SectionLabel: View {
 
 // MARK: - Copy helpers
 
-/// "1 path" / "3 paths" — a count with a correctly pluralized noun. The design
+/// "1 path" / "3 paths". A count with a correctly pluralized noun. The design
 /// language never ships programmer plurals like "1 finding(s)".
 public func plural(_ n: Int, _ singular: String, _ pluralForm: String? = nil) -> String {
     "\(n) \(n == 1 ? singular : (pluralForm ?? singular + "s"))"
@@ -342,7 +342,7 @@ public func plural(_ n: Int, _ singular: String, _ pluralForm: String? = nil) ->
 
 /// The large blurred watermark that sits behind a page: a decorative glyph,
 /// heavily blurred, drifting on a slow loop. It is what gives the language its
-/// sense of depth, and it is deliberately a *symbol* rather than a gradient —
+/// sense of depth, and it is deliberately a *symbol* rather than a gradient:
 /// the silhouette keeps the shape organic instead of a perfect circle.
 ///
 /// Use a different glyph per page, distinct from the sidebar's nav icons.
