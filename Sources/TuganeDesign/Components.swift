@@ -362,6 +362,14 @@ public struct PageBackdrop: View {
         Image(systemName: symbol)
             .font(.system(size: 460, weight: .regular))
             .foregroundStyle(tint ?? p.accent)
+            // A blurred layer is cut off at its own bounds, so the glow ended
+            // in a hard vertical line rather than fading out. The glyph drifts
+            // partly past the trailing edge, which carried that line back into
+            // the page: a strip with no backdrop that slid in and out on the
+            // 11 second loop. Padding before the blur puts the cut well
+            // outside the page, where 48 points of blur has nothing left to
+            // show. Keep this comfortably above three times the blur radius.
+            .padding(220)
             .blur(radius: 48)
             .rotationEffect(.degrees(drift ? -2 : -14))
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
